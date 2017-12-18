@@ -1,0 +1,19 @@
+---
+# tasks file for luks
+- name: check if device is available
+  stat:
+    path: "/dev/mapper/{{ luks_crypt_name }}"
+  register: stat_cryptdata
+
+- name: decrypt dir if necessary
+  shell:
+    echo -n "{{ luks_pwd }}"|cryptsetup luksOpen /dev/{{ luks_crypt_device }} {{ luks_crypt_name }}
+  when: stat_cryptdata.stat.exists == False
+
+- name: mount crypted device
+  mount:
+    path: "{{ luks_mount_path }}"
+    src: "/dev/mapper/{{ luks_crypt_name }}"
+    state: mounted
+    fstype: "{{ luks_fstype|default(omit) }}"
+    opts: "{{ luks_mount_opts|default(noauto) }}"
