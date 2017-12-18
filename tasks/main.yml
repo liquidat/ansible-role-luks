@@ -16,4 +16,4 @@
     src: "/dev/mapper/{{ luks_crypt_name }}"
     state: mounted
     fstype: "{{ luks_fstype|default(omit) }}"
-    opts: "{{ luks_mount_opts|default(noauto) }}"
+    opts: "{{ luks_mount_opts|default('noauto') }}"
